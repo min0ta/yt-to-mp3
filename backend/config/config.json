@@ -1,0 +1,8 @@
+{
+    "port": ":3001",
+    "allowedCors": "http://localhost:5173",
+    "maxVideoDurationSeconds": 500,
+    "maxSizeBytes": 4194304,
+    "idGenerationSymbols": "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKKLZXCVBNM1234567890-",
+    "idLength": 32
+}
