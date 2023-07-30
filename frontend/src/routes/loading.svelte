@@ -47,7 +47,7 @@
         if(!regex.test(url)) {
             return Promise.reject("Not valid url")
         }
-        const res = await fetch(`http://localhost:3001/ping?url=${url}`).then(response => response.json())
+        const res = await fetch(`https://yt-to-mp3-backend.onrender.com/ping?url=${url}`).then(response => response.json())
         if (res.err) {
             return Promise.reject(res.err)
         }

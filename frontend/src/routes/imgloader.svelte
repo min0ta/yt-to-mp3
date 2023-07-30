@@ -8,7 +8,7 @@
         arr.push(`${quality}qdefault.${ext}`)
         return arr.join("/")
     }
-</script>
+</script> 
 <picture>
     <source srcset={handleUrl(thumb, "h")} media="(min-width: 400px)" />
     <img decoding="async" src={handleUrl(thumb, "m")} alt=""/>

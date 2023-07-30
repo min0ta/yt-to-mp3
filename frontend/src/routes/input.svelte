@@ -8,7 +8,7 @@
     export let setTarget: Function
     export let target: string
     let input: string
-
+    
     async function paste() {
         input = await navigator.clipboard.readText()
     }
@@ -28,7 +28,7 @@
     function createLink() {
         setLoad(null)
         const targ = target === "mp4" ? "video" : "audio"
-        setLink(`http://localhost:3001/${targ}?url=${input}`)
+        setLink(`https://yt-to-mp3-backend.onrender.com/${targ}?url=${input}`)
         setTimeout(() => {setLoad(Loading)}, 0)
     }
 </script>
