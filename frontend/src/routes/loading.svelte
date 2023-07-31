@@ -1,7 +1,7 @@
 <script lang="ts">
   import Imgloader from "./imgloader.svelte";
 
-    export let link: string
+    export let link: string[]
     export let target: string
 
     let val: number = 0 
@@ -19,7 +19,14 @@
         return ""
     }
     async function newFetch() {
-        const q = await fetch(link)
+        const input = link[1]
+        const regex = /(?:https?:)?(?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*?[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/gim
+        const exec = regex.exec(input)
+        if (exec === null) {
+            return Promise.reject("invalid url")
+        }
+        const id = exec[1]
+        const q = await fetch(`https://yt-to-mp3-backend.onrender.com/ping?url=${id}`)
         const reader = q.body?.getReader()
         const contentLength = q.headers.get("Content-Length")
         if (!contentLength) {
@@ -36,18 +43,18 @@
             chuncks.push(value)
             recieveddLen += value.length
             val = (recieveddLen/(+contentLength) * 100) | 0
-            console.log(val)
         }
         return new Blob(chuncks)
     }
   
     async function ping(){
-        const url = link.split("?url=")[1]
-        const regex = /^(https:\/\/www\.){0,1}youtube\.com\/watch\?v=[a-zA-Z0-9_-]{11}/
-        if(!regex.test(url)) {
+        const regex = /(?:https?:)?(?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*?[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/gim
+        const url = regex.exec(link[1])
+        if (url == null) {
             return Promise.reject("Not valid url")
         }
-        const res = await fetch(`https://yt-to-mp3-backend.onrender.com/ping?url=${url}`).then(response => response.json())
+        const id = url[1]
+        const res = await fetch(`https://yt-to-mp3-backend.onrender.com/ping?url=${id}`).then(response => response.json())
         if (res.err) {
             return Promise.reject(res.err)
         }

@@ -1,7 +1,7 @@
 {
     "port": ":3001",
     "allowedCors": "https://youtubemp3.onrender.com",
-    "maxVideoDurationSeconds": 500,
+    "maxVideoDurationSeconds": 1200,
     "maxSizeBytes": 4194304,
     "idGenerationSymbols": "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKKLZXCVBNM1234567890-",
     "idLength": 32

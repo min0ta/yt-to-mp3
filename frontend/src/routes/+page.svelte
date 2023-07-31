@@ -8,8 +8,8 @@ let load: any = null
 function setLoad(arg: any) {
     load = arg
 }
-let link = ""
-function setLink(arg: string) {
+let link: string[] = []
+function setLink(arg: string[]) {
     link = arg
 }
 let target = "mp4"

@@ -28,7 +28,7 @@
     function createLink() {
         setLoad(null)
         const targ = target === "mp4" ? "video" : "audio"
-        setLink(`https://yt-to-mp3-backend.onrender.com/${targ}?url=${input}`)
+        setLink([targ, input])
         setTimeout(() => {setLoad(Loading)}, 0)
     }
 </script>

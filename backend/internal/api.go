@@ -10,6 +10,8 @@ import (
 	"strconv"
 )
 
+var regex, _ = regexp.Compile(`[a-zA-Z0-9-_]{11}`)
+
 type APIserver struct {
 	config     *config.Config
 	downloader *downloader.Downloader
@@ -36,7 +38,7 @@ func (s *APIserver) configureRouter() {
 }
 
 func (s *APIserver) handleVideo() http.HandlerFunc {
-	regex, _ := regexp.Compile(`^(https:\/\/www\.){0,1}youtube\.com\/watch\?v=[a-zA-Z0-9_-]{11}`)
+
 	allowed := s.config.CORS_ALLOWED
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", allowed)
@@ -49,7 +51,10 @@ func (s *APIserver) handleVideo() http.HandlerFunc {
 			io.WriteString(w, `{"err":"not valid url"}`)
 			return
 		}
-
+		if len(youtubeUrl) != 11 {
+			io.WriteString(w, `{"err":"not valid url"}`)
+			return
+		}
 		stream, len, err := s.downloader.GetMP4(youtubeUrl)
 		if err != nil {
 			w.WriteHeader(400)
@@ -62,7 +67,7 @@ func (s *APIserver) handleVideo() http.HandlerFunc {
 	}
 }
 func (s *APIserver) handleFastMP3() http.HandlerFunc {
-	regex, _ := regexp.Compile(`^(https:\/\/www\.){0,1}youtube\.com\/watch\?v=[a-zA-Z0-9_-]{11}`)
+
 	allowed := s.config.CORS_ALLOWED
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", allowed)
@@ -75,7 +80,10 @@ func (s *APIserver) handleFastMP3() http.HandlerFunc {
 			io.WriteString(w, `{"err":"not valid url"}`)
 			return
 		}
-
+		if len(youtubeUrl) != 11 {
+			io.WriteString(w, `{"err":"not valid url"}`)
+			return
+		}
 		stream, len, err := s.downloader.GetFastMP3(youtubeUrl)
 		if err != nil {
 			w.WriteHeader(400)
@@ -89,12 +97,16 @@ func (s *APIserver) handleFastMP3() http.HandlerFunc {
 }
 
 func (s *APIserver) Ping() http.HandlerFunc {
-	regex, _ := regexp.Compile(`^(https:\/\/www\.){0,1}youtube\.com\/watch\?v=[a-zA-Z0-9_-]{11}`)
+
 	allowed := s.config.CORS_ALLOWED
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", allowed)
 		youtubeUrl := r.URL.Query().Get("url")
 		if !regex.Match([]byte(youtubeUrl)) {
+			io.WriteString(w, `{"err":"not valid url"}`)
+			return
+		}
+		if len(youtubeUrl) != 11 {
 			io.WriteString(w, `{"err":"not valid url"}`)
 			return
 		}
