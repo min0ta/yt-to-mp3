@@ -26,7 +26,7 @@
             return Promise.reject("invalid url")
         }
         const id = exec[1]
-        const q = await fetch(`https://yt-to-mp3-backend.onrender.com/ping?url=${id}`)
+        const q = await fetch(`https://yt-to-mp3-backend.onrender.com/${link[0]}?url=${id}`)
         const reader = q.body?.getReader()
         const contentLength = q.headers.get("Content-Length")
         if (!contentLength) {
