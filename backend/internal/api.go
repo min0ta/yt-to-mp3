@@ -35,6 +35,7 @@ func (s *APIserver) configureRouter() {
 	http.HandleFunc("/audio", s.handleFastMP3())
 	http.HandleFunc("/", s.handleError())
 	http.HandleFunc("/ping", s.Ping())
+	http.HandleFunc("/subtitle", s.handleSubtitles())
 }
 
 func (s *APIserver) handleVideo() http.HandlerFunc {
@@ -120,6 +121,34 @@ func (s *APIserver) Ping() http.HandlerFunc {
 		io.WriteString(w, res)
 	}
 }
+
+func (s *APIserver) handleSubtitles() http.HandlerFunc {
+	regex, _ := regexp.Compile(`^(https:\/\/www\.){0,1}youtube\.com\/watch\?v=[a-zA-Z0-9_-]{11}`)
+	allowed := s.config.CORS_ALLOWED
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", allowed)
+		if r.Method != "GET" {
+			w.WriteHeader(404)
+			return
+		}
+		youtubeUrl := r.URL.Query().Get("url")
+		if !regex.Match([]byte(youtubeUrl)) {
+			io.WriteString(w, `{"err":"not valid url"}`)
+			return
+		}
+
+		subs, err := s.downloader.GetSubtitile(youtubeUrl)
+		if err != nil {
+			w.WriteHeader(400)
+			res := fmt.Sprintf(`{"err":"%s"}`, err.Error())
+			io.WriteString(w, res)
+			return
+		}
+		io.WriteString(w, subs.String())
+	}
+}
+
 func (s *APIserver) handleError() http.HandlerFunc {
 	allowed := s.config.CORS_ALLOWED
 	return func(w http.ResponseWriter, r *http.Request) {

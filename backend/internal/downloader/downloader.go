@@ -29,6 +29,22 @@ func (d *Downloader) Validate(vid *youtube.Video) (string, error) {
 	return vid.ID, nil
 }
 
+func (d *Downloader) GetSubtitile(url string) (youtube.VideoTranscript, error) {
+	vid, err := d.client.GetVideo(url)
+	if err != nil {
+		return nil, err
+	}
+	_, err = d.Validate(vid)
+	if err != nil {
+		return nil, err
+	}
+	res, err := d.client.GetTranscript(vid)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
 func (d *Downloader) Ping(url string) (*youtube.Video, error) {
 	vid, err := d.client.GetVideo(url)
 	if err != nil {
